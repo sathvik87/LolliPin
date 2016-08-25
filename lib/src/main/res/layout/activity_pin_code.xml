@@ -7,6 +7,7 @@
     android:background="@android:color/white"
     android:fillViewport="true">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,6 +15,7 @@
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_pin_code_padding"
         android:paddingTop="@dimen/activity_pin_code_padding">
+
 
         <ImageView
             android:id="@+id/pin_code_logo_imageview"
@@ -25,6 +27,16 @@
             android:visibility="invisible"
             tools:src="@android:drawable/sym_def_app_icon"
             tools:visibility="visible" />
+
+        <ProgressBar
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:id="@+id/loading_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@android:color/holo_red_dark"
+            android:layout_gravity="center" />
 
         <com.github.omadahealth.typefaceview.TypefaceTextView
             android:id="@+id/pin_code_step_textview"

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
@@ -264,7 +267,7 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
     }
 
     @Override
-    public boolean checkPasscode(String passcode) {
+    public void checkPasscode(String passcode, Handler handler, int type) {
         Algorithm algorithm = Algorithm.getFromText(mSharedPreferences.getString(PASSWORD_ALGORITHM_PREFERENCE_KEY, ""));
 
         String salt = getSalt();
@@ -286,15 +289,22 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
             storedPasscode = mSharedPreferences.getString(PASSWORD_PREFERENCE_KEY, "");
         }
 
+        final Message msg = new Message();
+        final Bundle b = new Bundle();
+        b.putInt(AppLock.ARG_STATE, type);
+
         if (storedPasscode.equalsIgnoreCase(passcode)) {
-            return true;
+            b.putBoolean(AppLock.ARG_CHECK_PASSCODE, true);
         } else {
-            return false;
+            b.putBoolean(AppLock.ARG_CHECK_PASSCODE, false);
         }
+
+        msg.setData(b);
+        handler.sendMessage(msg);
     }
 
     @Override
-    public boolean setPasscode(String passcode) {
+    public void setPasscode(String passcode, Handler handler, int state) {
         String salt = getSalt();
         SharedPreferences.Editor editor = mSharedPreferences.edit();
 
@@ -306,6 +316,7 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
             setAlgorithm(Algorithm.PBKDF2);
             try {
                 passcode = Encryptor.getPBKDF2Pass(passcode, salt);
+
             } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
                 passcode = salt + passcode + salt;
                 setAlgorithm(Algorithm.SHA256);
@@ -315,13 +326,19 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
             editor.putString(PASSWORD_PREFERENCE_KEY, passcode);
             editor.apply();
             this.enable();
+
         }
 
-        return true;
+        Message msg = new Message();
+        Bundle bundle = new Bundle();
+        bundle.putInt(AppLock.ARG_STATE, state);
+        msg.setData(bundle);
+        handler.sendMessage(msg);
+
     }
 
     /**
-     * Set the algorithm used in {@link #setPasscode(String)}
+     * Set the algorithm used in {@link #setPasscode(String, Handler,int)}
      */
     private void setAlgorithm(Algorithm algorithm) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();

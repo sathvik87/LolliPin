@@ -25,7 +25,7 @@ public class LockedCompatActivity extends PinCompatActivity{
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         toolbar.setSubtitle("SubTitle");
         toolbar.setSubtitleTextColor(getResources().getColor(android.R.color.white));
-        toolbar.setLogo(R.drawable.ic_launcher);
+        //toolbar.setLogo(R.drawable.ic_launcher);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_36dp);
     }
 }

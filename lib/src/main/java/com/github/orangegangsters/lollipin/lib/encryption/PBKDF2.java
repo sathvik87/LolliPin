@@ -16,7 +16,7 @@ public class PBKDF2 {
     // Number of PBKDF2 hardening rounds to use. Larger values increase
     // computation time. You should select a value that causes computation
     // to take >100ms.
-    private static final int ITERATIONS = 1000;
+    private static final int ITERATIONS = 60001;
 
     // Generate a 256-bit key
     private static final int KEY_LENGTH = 256; // bits

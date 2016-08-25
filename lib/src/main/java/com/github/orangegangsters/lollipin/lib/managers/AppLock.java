@@ -1,6 +1,7 @@
 package com.github.orangegangsters.lollipin.lib.managers;
 
 import android.app.Activity;
+import android.os.Handler;
 
 import java.util.HashSet;
 
@@ -51,6 +52,10 @@ public abstract class AppLock {
      * {@link com.github.orangegangsters.lollipin.lib.managers.AppLockActivity} etc...
      */
     protected HashSet<String> mIgnoredActivities;
+
+    public static final String ARG_STATE = "type";
+
+    public static final String ARG_CHECK_PASSCODE = "check_passcode";
 
     public AppLock() {
         mIgnoredActivities = new HashSet<String>();
@@ -160,7 +165,7 @@ public abstract class AppLock {
      * Set the passcode (store his SHA1 into {@link android.content.SharedPreferences}) using the
      * {@link com.github.orangegangsters.lollipin.lib.encryption.Encryptor} class.
      */
-    public abstract boolean setPasscode(String passcode);
+    public abstract void setPasscode(String passcode, Handler handler, int type);
 
     /**
      * Check the {@link android.content.SharedPreferences} to see if fingerprint authentication is
@@ -179,7 +184,7 @@ public abstract class AppLock {
      * Check the passcode by comparing his SHA1 into {@link android.content.SharedPreferences} using the
      * {@link com.github.orangegangsters.lollipin.lib.encryption.Encryptor} class.
      */
-    public abstract boolean checkPasscode(String passcode);
+    public abstract void checkPasscode(String passcode, Handler handler, int type);
 
     /**
      * Check the {@link android.content.SharedPreferences} to see if a password already exists
