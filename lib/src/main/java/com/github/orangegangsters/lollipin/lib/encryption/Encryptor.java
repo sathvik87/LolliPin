@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.github.orangegangsters.lollipin.lib.enums.Algorithm;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Locale;
 
 /**
@@ -53,6 +55,13 @@ public class Encryptor {
         }
 
         return null;
+    }
+
+    public static String getPBKDF2Pass(String text, String salt) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        if (TextUtils.isEmpty(text)) {
+            return "";
+        }
+        return PBKDF2.hashPassword(text,salt);
     }
 
     /**

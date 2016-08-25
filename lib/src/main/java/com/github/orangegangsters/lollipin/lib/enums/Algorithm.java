@@ -5,7 +5,7 @@ package com.github.orangegangsters.lollipin.lib.enums;
  */
 public enum Algorithm {
 
-    SHA1("1"), SHA256("2");
+    SHA1("1"), SHA256("2"), PBKDF2("3");
 
     private String mValue;
 

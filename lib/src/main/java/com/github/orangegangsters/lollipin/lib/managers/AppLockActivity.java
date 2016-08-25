@@ -276,6 +276,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
     /**
      * Switch over the {@link #mType} to determine if the password is ok, if we should pass to the next step etc...
      */
+    //TODO: This should be non-blocking. If the iterations are higher for PBKDF2, UI is blocked.
     protected void onPinCodeInputed() {
         switch (mType) {
             case AppLock.DISABLE_PINLOCK:

@@ -16,7 +16,9 @@ import com.github.orangegangsters.lollipin.lib.encryption.Encryptor;
 import com.github.orangegangsters.lollipin.lib.enums.Algorithm;
 import com.github.orangegangsters.lollipin.lib.interfaces.LifeCycleInterface;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 
 public class AppLockImpl<T extends AppLockActivity> extends AppLock implements LifeCycleInterface {
@@ -266,8 +268,18 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
         Algorithm algorithm = Algorithm.getFromText(mSharedPreferences.getString(PASSWORD_ALGORITHM_PREFERENCE_KEY, ""));
 
         String salt = getSalt();
-        passcode = salt + passcode + salt;
-        passcode = Encryptor.getSHA(passcode, algorithm);
+
+        if(algorithm != null && algorithm.equals(Algorithm.PBKDF2)) {
+            try {
+                passcode = Encryptor.getPBKDF2Pass(passcode, salt);
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+               e.printStackTrace();
+            }
+        } else {
+            passcode = salt + passcode + salt;
+            passcode = Encryptor.getSHA(passcode, algorithm);
+        }
+
         String storedPasscode = "";
 
         if (mSharedPreferences.contains(PASSWORD_PREFERENCE_KEY)) {
@@ -291,9 +303,15 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
             editor.apply();
             this.disable();
         } else {
-            passcode = salt + passcode + salt;
-            setAlgorithm(Algorithm.SHA256);
-            passcode = Encryptor.getSHA(passcode, Algorithm.SHA256);
+            setAlgorithm(Algorithm.PBKDF2);
+            try {
+                passcode = Encryptor.getPBKDF2Pass(passcode, salt);
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+                passcode = salt + passcode + salt;
+                setAlgorithm(Algorithm.SHA256);
+                passcode = Encryptor.getSHA(passcode, Algorithm.SHA256);
+            }
+
             editor.putString(PASSWORD_PREFERENCE_KEY, passcode);
             editor.apply();
             this.enable();
